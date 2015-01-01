@@ -1,0 +1,26 @@
+A bounded min-priority queue implementation for Go (http://golang.org)
+Adam Wright (adamw@archgrove.co.uk)
+
+This library uses two backend implementations, depending on the size of the queue. For queues less than 128 elements, a contiguous ring buffer is used. This gives O(1) pop and O(n) push, but the simplicity and cache coherency of the implementation ensures it performs well (over 15 million operations per second in simple benchmarks).
+
+For queues larger than 128 elements, a balanced binary heap is used. In most cases, this gives O(log n) Push and Pop. However, in the full heap case, when enqueuing an item that pushes another out of the queue, the performance degrades to O(n). Nonetheless, this is a lot faster than the linear implementation. Note that, for the heap case, the order of items with identical priorities is not maintained.
+
+Test and benchmarks are in bpq_test.go.
+
+To use:
+
+    import "bpq"
+
+    bpq.BPQWithCapacity(maxCapacity)
+
+    var didEnqueue bool = bpq.Push(AnyThing, AnIntegerPriority)
+    ...
+    var value, err = bpq.Pop()
+
+The only error is bpq.NoElementsError, returned when popping an empty queue.
+
+TODO:
+  Fix the O(n) degradation in the heap case
+  Make the comparison choice parametric 
+  Make the heap case respect FIFO for identically prioritised items
+  General optimisations
