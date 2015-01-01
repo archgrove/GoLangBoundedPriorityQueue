@@ -96,7 +96,3 @@ func (bpq *bpqRingBuffer) Pop() (interface{}, error) {
 
   return result, nil
 }
-
-func (bpq *bpqRingBuffer) indexToRingIndex(index int) int {
-  return (bpq.startIndex + index) % len(bpq.entries)
-}
